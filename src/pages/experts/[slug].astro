@@ -1,0 +1,124 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { getCollection } from 'astro:content';
+
+export async function getStaticPaths() {
+  const experts = await getCollection('experts');
+  return experts.map((expert) => ({
+    params: { slug: expert.slug },
+    props: { expert }
+  }));
+}
+
+const { expert } = Astro.props;
+const { Content } = await expert.render();
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "Person",
+  "name": expert.data.name,
+  "jobTitle": expert.data.role,
+  "description": expert.data.fullBio,
+  "knowsAbout": expert.data.specialties,
+  "worksFor": {
+    "@type": "Organization",
+    "name": "ÉcoRénov'"
+  }
+};
+---
+
+<Layout title={`${expert.data.name} - ${expert.data.role}`} description={expert.data.fullBio} jsonLd={jsonLd}>
+  <article class="section-padding">
+    <div class="container-custom mx-auto">
+      <div class="max-w-4xl mx-auto">
+        <!-- Header -->
+        <div class="flex flex-col md:flex-row items-start gap-8 mb-12">
+          <div class="w-32 h-32 bg-gradient-to-br from-emerald-400 to-emerald-600 rounded-2xl flex items-center justify-center text-white text-4xl font-bold shadow-xl shadow-emerald-500/30 shrink-0">
+            {expert.data.name.split(' ').map((n: string) => n[0]).join('')}
+          </div>
+          <div>
+            <div class="flex items-center gap-3 mb-2">
+              <h1 class="text-3xl md:text-4xl font-display font-bold text-navy-900">
+                {expert.data.name}
+              </h1>
+              <svg class="w-6 h-6 text-emerald-500" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"/>
+              </svg>
+            </div>
+            <p class="text-emerald-600 font-semibold text-lg mb-4">{expert.data.role}</p>
+            <p class="text-navy-600 leading-relaxed">{expert.data.fullBio}</p>
+          </div>
+        </div>
+        
+        <!-- Stats -->
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-12">
+          <div class="card p-4 text-center">
+            <p class="text-2xl font-display font-bold text-emerald-600">{expert.data.experience}</p>
+            <p class="text-sm text-navy-500">d'expérience</p>
+          </div>
+          <div class="card p-4 text-center">
+            <p class="text-2xl font-display font-bold text-emerald-600">{expert.data.certifications.length}</p>
+            <p class="text-sm text-navy-500">certifications</p>
+          </div>
+          <div class="card p-4 text-center">
+            <p class="text-2xl font-display font-bold text-emerald-600">{expert.data.specialties.length}</p>
+            <p class="text-sm text-navy-500">spécialités</p>
+          </div>
+          <div class="card p-4 text-center">
+            <p class="text-2xl font-display font-bold text-emerald-600">100%</p>
+            <p class="text-sm text-navy-500">indépendant</p>
+          </div>
+        </div>
+        
+        <!-- Certifications & Specialties -->
+        <div class="grid md:grid-cols-2 gap-8 mb-12">
+          <div class="card p-6">
+            <h2 class="font-display font-semibold text-xl text-navy-900 mb-4">Certifications</h2>
+            <ul class="space-y-3">
+              {expert.data.certifications.map((cert: string) => (
+                <li class="flex items-start gap-3">
+                  <svg class="w-5 h-5 text-emerald-500 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                  </svg>
+                  <span class="text-navy-700">{cert}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+          
+          <div class="card p-6">
+            <h2 class="font-display font-semibold text-xl text-navy-900 mb-4">Domaines d'expertise</h2>
+            <div class="flex flex-wrap gap-2">
+              {expert.data.specialties.map((specialty: string) => (
+                <span class="px-3 py-2 bg-emerald-100 text-emerald-700 rounded-lg text-sm font-medium">
+                  {specialty}
+                </span>
+              ))}
+            </div>
+          </div>
+        </div>
+        
+        <!-- Content -->
+        <div class="prose-custom mb-12">
+          <Content />
+        </div>
+        
+        <!-- CTA -->
+        <div class="p-8 bg-gradient-to-br from-navy-800 to-navy-900 rounded-2xl text-white text-center">
+          <h2 class="text-2xl font-display font-bold mb-4">
+            Besoin des conseils de {expert.data.name.split(' ')[0]} ?
+          </h2>
+          <p class="text-navy-200 mb-6 max-w-lg mx-auto">
+            Commencez par notre simulateur gratuit. Si votre projet est éligible, {expert.data.name.split(' ')[0]} ou un autre expert de notre équipe vous rappellera sous 24h.
+          </p>
+          <a href="/simulateur" class="inline-flex items-center gap-2 px-6 py-3 bg-emerald-500 text-white font-semibold rounded-lg hover:bg-emerald-600 transition-colors">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"/>
+            </svg>
+            Calculer mes économies
+          </a>
+        </div>
+      </div>
+    </div>
+  </article>
+</Layout>

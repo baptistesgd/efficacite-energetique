@@ -1,0 +1,64 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { getCollection } from 'astro:content';
+
+const comparisons = await getCollection('comparisons');
+
+const pageTitle = "Comparatifs - PAC, chaudières, solaire";
+const pageDescription = "Comparez les solutions de chauffage et d'énergie : pompe à chaleur vs chaudière, solaire vs réseau... Des analyses objectives pour faire le bon choix.";
+---
+
+<Layout title={pageTitle} description={pageDescription}>
+  <section class="section-padding bg-gradient-to-b from-navy-50 to-white">
+    <div class="container-custom mx-auto">
+      <div class="text-center mb-12">
+        <h1 class="text-4xl md:text-5xl font-display font-bold text-navy-900 mb-4">
+          <span class="gradient-text">Comparatifs</span> objectifs
+        </h1>
+        <p class="text-lg text-navy-600 max-w-2xl mx-auto">
+          Des analyses détaillées pour vous aider à choisir la solution la plus adaptée à votre situation.
+        </p>
+      </div>
+      
+      <div class="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+        {comparisons.map((comparison) => (
+          <a href={`/comparatifs/${comparison.slug}`} class="card card-hover overflow-hidden group">
+            <div class="p-6">
+              <div class="flex items-center justify-center gap-4 mb-6">
+                <div class="w-16 h-16 bg-emerald-100 rounded-xl flex items-center justify-center">
+                  <svg class="w-8 h-8 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>
+                  </svg>
+                </div>
+                <span class="text-2xl text-navy-300 font-bold">VS</span>
+                <div class="w-16 h-16 bg-amber-100 rounded-xl flex items-center justify-center">
+                  <svg class="w-8 h-8 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 18.657A8 8 0 016.343 7.343S7 9 9 10c0-2 .5-5 2.986-7C14 5 16.09 5.777 17.656 7.343A7.975 7.975 0 0120 13a7.975 7.975 0 01-2.343 5.657z"/>
+                  </svg>
+                </div>
+              </div>
+              
+              <h2 class="text-xl font-display font-semibold text-navy-900 group-hover:text-emerald-600 transition-colors text-center mb-3">
+                {comparison.data.title}
+              </h2>
+              <p class="text-navy-600 text-sm text-center mb-6">
+                {comparison.data.description}
+              </p>
+              
+              <div class="grid grid-cols-2 gap-4 text-center text-sm">
+                <div class="bg-emerald-50 rounded-lg p-3">
+                  <p class="font-semibold text-emerald-700">{comparison.data.solution1.name}</p>
+                  <p class="text-emerald-600">{comparison.data.solution1.price}</p>
+                </div>
+                <div class="bg-amber-50 rounded-lg p-3">
+                  <p class="font-semibold text-amber-700">{comparison.data.solution2.name}</p>
+                  <p class="text-amber-600">{comparison.data.solution2.price}</p>
+                </div>
+              </div>
+            </div>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+</Layout>

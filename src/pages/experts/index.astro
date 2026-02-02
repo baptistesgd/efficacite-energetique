@@ -1,0 +1,62 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { getCollection } from 'astro:content';
+
+const experts = await getCollection('experts');
+
+const pageTitle = "Nos Experts - Équipe certifiée RGE";
+const pageDescription = "Découvrez notre équipe d'experts certifiés en rénovation énergétique. Ingénieurs, thermiciens et spécialistes des aides financières.";
+---
+
+<Layout title={pageTitle} description={pageDescription}>
+  <section class="section-padding bg-gradient-to-b from-navy-50 to-white">
+    <div class="container-custom mx-auto">
+      <div class="text-center mb-12">
+        <span class="trust-badge mb-4">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"/>
+          </svg>
+          Experts certifiés
+        </span>
+        <h1 class="text-4xl md:text-5xl font-display font-bold text-navy-900 mb-4">
+          Notre équipe d'<span class="gradient-text">experts</span>
+        </h1>
+        <p class="text-lg text-navy-600 max-w-2xl mx-auto">
+          Des professionnels qualifiés et indépendants pour vous accompagner dans votre projet de rénovation énergétique.
+        </p>
+      </div>
+      
+      <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+        {experts.map((expert) => (
+          <a href={`/experts/${expert.slug}`} class="card card-hover p-8 text-center group">
+            <div class="w-24 h-24 bg-gradient-to-br from-emerald-400 to-emerald-600 rounded-2xl flex items-center justify-center mx-auto mb-6 text-white text-2xl font-bold shadow-lg shadow-emerald-500/30 group-hover:shadow-emerald-500/50 transition-shadow">
+              {expert.data.name.split(' ').map((n: string) => n[0]).join('')}
+            </div>
+            <h2 class="text-xl font-display font-semibold text-navy-900 group-hover:text-emerald-600 transition-colors mb-2">
+              {expert.data.name}
+            </h2>
+            <p class="text-emerald-600 font-medium mb-4">{expert.data.role}</p>
+            <p class="text-navy-600 text-sm mb-6">{expert.data.bio}</p>
+            <div class="flex flex-wrap justify-center gap-2">
+              {expert.data.certifications.slice(0, 2).map((cert: string) => (
+                <span class="px-2 py-1 bg-navy-100 text-navy-600 rounded text-xs">
+                  {cert}
+                </span>
+              ))}
+            </div>
+          </a>
+        ))}
+      </div>
+      
+      <!-- CTA -->
+      <div class="mt-16 text-center">
+        <p class="text-navy-600 mb-4">
+          Besoin d'un conseil personnalisé pour votre projet ?
+        </p>
+        <a href="/simulateur" class="btn-primary">
+          Parler à un expert gratuitement
+        </a>
+      </div>
+    </div>
+  </section>
+</Layout>

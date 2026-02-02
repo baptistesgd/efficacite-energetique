@@ -1,0 +1,117 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import AuthorBox from '../../components/AuthorBox.astro';
+import { getCollection } from 'astro:content';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('blog');
+  return posts.map((post) => ({
+    params: { slug: post.slug },
+    props: { post }
+  }));
+}
+
+const { post } = Astro.props;
+const { Content } = await post.render();
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": post.data.title,
+  "description": post.data.description,
+  "datePublished": post.data.pubDate.toISOString(),
+  "dateModified": (post.data.updatedDate || post.data.pubDate).toISOString(),
+  "author": {
+    "@type": "Person",
+    "name": post.data.author.name,
+    "jobTitle": post.data.author.role,
+    "url": `https://ecorenov-leads.vercel.app/experts/${post.data.author.slug}`
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "ÉcoRénov'",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://ecorenov-leads.vercel.app/logo.png"
+    }
+  },
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": Astro.url.href
+  }
+};
+---
+
+<Layout title={post.data.title} description={post.data.description} jsonLd={jsonLd}>
+  <article class="section-padding">
+    <div class="container-custom mx-auto">
+      <div class="max-w-3xl mx-auto">
+        <!-- Breadcrumb -->
+        <nav class="flex items-center gap-2 text-sm text-navy-500 mb-8">
+          <a href="/" class="hover:text-emerald-600 transition-colors">Accueil</a>
+          <span>/</span>
+          <a href="/blog" class="hover:text-emerald-600 transition-colors">Blog</a>
+          <span>/</span>
+          <span class="text-navy-700">{post.data.title.slice(0, 30)}...</span>
+        </nav>
+        
+        <!-- Header -->
+        <header class="mb-10">
+          <div class="flex items-center gap-2 mb-4">
+            <span class="px-3 py-1 bg-emerald-100 text-emerald-700 rounded-full text-sm font-medium">
+              {post.data.category}
+            </span>
+            <span class="text-navy-400 text-sm">
+              {post.data.pubDate.toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })}
+            </span>
+          </div>
+          <h1 class="text-3xl md:text-4xl lg:text-5xl font-display font-bold text-navy-900 leading-tight mb-6">
+            {post.data.title}
+          </h1>
+          <p class="text-xl text-navy-600 leading-relaxed">
+            {post.data.description}
+          </p>
+        </header>
+        
+        <!-- Content -->
+        <div class="prose-custom mb-12">
+          <Content />
+        </div>
+        
+        <!-- Tags -->
+        <div class="flex flex-wrap gap-2 mb-10 pb-10 border-b border-navy-100">
+          {post.data.tags.map((tag: string) => (
+            <span class="px-3 py-1 bg-navy-100 text-navy-600 rounded-full text-sm">
+              #{tag}
+            </span>
+          ))}
+        </div>
+        
+        <!-- Author Box -->
+        <AuthorBox 
+          name={post.data.author.name}
+          role={post.data.author.role}
+          image=""
+          bio="Expert en rénovation énergétique, accompagne les particuliers dans leurs projets d'économies d'énergie."
+          slug={post.data.author.slug}
+        />
+        
+        <!-- CTA -->
+        <div class="mt-12 p-8 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-2xl text-white text-center">
+          <h2 class="text-2xl font-display font-bold mb-4">
+            Passez à l'action maintenant
+          </h2>
+          <p class="text-emerald-100 mb-6 max-w-lg mx-auto">
+            Calculez vos économies potentielles et vérifiez votre éligibilité aux aides MaPrimeRénov' 2026.
+          </p>
+          <a href="/simulateur" class="inline-flex items-center gap-2 px-6 py-3 bg-white text-emerald-600 font-semibold rounded-lg hover:bg-emerald-50 transition-colors">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"/>
+            </svg>
+            Calculer mes économies
+          </a>
+        </div>
+      </div>
+    </div>
+  </article>
+</Layout>

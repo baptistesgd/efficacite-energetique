@@ -1,0 +1,225 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import AuthorBox from '../../components/AuthorBox.astro';
+import { getCollection } from 'astro:content';
+
+export async function getStaticPaths() {
+  const comparisons = await getCollection('comparisons');
+  return comparisons.map((comparison) => ({
+    params: { slug: comparison.slug },
+    props: { comparison }
+  }));
+}
+
+const { comparison } = Astro.props;
+const { Content } = await comparison.render();
+const { solution1, solution2 } = comparison.data;
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": comparison.data.title,
+  "description": comparison.data.description,
+  "datePublished": comparison.data.pubDate.toISOString(),
+  "author": {
+    "@type": "Person",
+    "name": comparison.data.author.name
+  }
+};
+---
+
+<Layout title={comparison.data.title} description={comparison.data.description} jsonLd={jsonLd}>
+  <article class="section-padding">
+    <div class="container-custom mx-auto">
+      <div class="max-w-4xl mx-auto">
+        <!-- Header -->
+        <header class="text-center mb-12">
+          <h1 class="text-3xl md:text-4xl lg:text-5xl font-display font-bold text-navy-900 mb-6">
+            {comparison.data.title}
+          </h1>
+          <p class="text-xl text-navy-600 max-w-2xl mx-auto">
+            {comparison.data.description}
+          </p>
+        </header>
+        
+        <!-- Comparison Cards -->
+        <div class="grid md:grid-cols-2 gap-6 mb-12">
+          <!-- Solution 1 -->
+          <div class="card p-6 border-2 border-emerald-200">
+            <div class="text-center mb-6">
+              <div class="w-16 h-16 bg-emerald-100 rounded-xl flex items-center justify-center mx-auto mb-4">
+                <svg class="w-8 h-8 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>
+                </svg>
+              </div>
+              <h2 class="text-xl font-display font-bold text-emerald-700">{solution1.name}</h2>
+            </div>
+            
+            <div class="space-y-4 mb-6">
+              <div class="bg-emerald-50 rounded-lg p-3 text-center">
+                <p class="text-sm text-emerald-600">Prix indicatif</p>
+                <p class="font-bold text-emerald-700">{solution1.price}</p>
+              </div>
+              <div class="grid grid-cols-2 gap-3 text-sm">
+                <div class="bg-navy-50 rounded-lg p-3 text-center">
+                  <p class="text-navy-500">Économies</p>
+                  <p class="font-semibold text-navy-700">{solution1.savings}</p>
+                </div>
+                <div class="bg-navy-50 rounded-lg p-3 text-center">
+                  <p class="text-navy-500">Durée de vie</p>
+                  <p class="font-semibold text-navy-700">{solution1.lifespan}</p>
+                </div>
+              </div>
+            </div>
+            
+            <div class="mb-4">
+              <h3 class="font-semibold text-navy-900 mb-2 flex items-center gap-2">
+                <svg class="w-5 h-5 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                </svg>
+                Avantages
+              </h3>
+              <ul class="space-y-2">
+                {solution1.pros.map((pro: string) => (
+                  <li class="flex items-start gap-2 text-sm text-navy-600">
+                    <svg class="w-4 h-4 text-emerald-500 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4"/>
+                    </svg>
+                    {pro}
+                  </li>
+                ))}
+              </ul>
+            </div>
+            
+            <div>
+              <h3 class="font-semibold text-navy-900 mb-2 flex items-center gap-2">
+                <svg class="w-5 h-5 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                </svg>
+                Inconvénients
+              </h3>
+              <ul class="space-y-2">
+                {solution1.cons.map((con: string) => (
+                  <li class="flex items-start gap-2 text-sm text-navy-600">
+                    <svg class="w-4 h-4 text-red-400 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4"/>
+                    </svg>
+                    {con}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+          
+          <!-- Solution 2 -->
+          <div class="card p-6 border-2 border-amber-200">
+            <div class="text-center mb-6">
+              <div class="w-16 h-16 bg-amber-100 rounded-xl flex items-center justify-center mx-auto mb-4">
+                <svg class="w-8 h-8 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 18.657A8 8 0 016.343 7.343S7 9 9 10c0-2 .5-5 2.986-7C14 5 16.09 5.777 17.656 7.343A7.975 7.975 0 0120 13a7.975 7.975 0 01-2.343 5.657z"/>
+                </svg>
+              </div>
+              <h2 class="text-xl font-display font-bold text-amber-700">{solution2.name}</h2>
+            </div>
+            
+            <div class="space-y-4 mb-6">
+              <div class="bg-amber-50 rounded-lg p-3 text-center">
+                <p class="text-sm text-amber-600">Prix indicatif</p>
+                <p class="font-bold text-amber-700">{solution2.price}</p>
+              </div>
+              <div class="grid grid-cols-2 gap-3 text-sm">
+                <div class="bg-navy-50 rounded-lg p-3 text-center">
+                  <p class="text-navy-500">Économies</p>
+                  <p class="font-semibold text-navy-700">{solution2.savings}</p>
+                </div>
+                <div class="bg-navy-50 rounded-lg p-3 text-center">
+                  <p class="text-navy-500">Durée de vie</p>
+                  <p class="font-semibold text-navy-700">{solution2.lifespan}</p>
+                </div>
+              </div>
+            </div>
+            
+            <div class="mb-4">
+              <h3 class="font-semibold text-navy-900 mb-2 flex items-center gap-2">
+                <svg class="w-5 h-5 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                </svg>
+                Avantages
+              </h3>
+              <ul class="space-y-2">
+                {solution2.pros.map((pro: string) => (
+                  <li class="flex items-start gap-2 text-sm text-navy-600">
+                    <svg class="w-4 h-4 text-emerald-500 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4"/>
+                    </svg>
+                    {pro}
+                  </li>
+                ))}
+              </ul>
+            </div>
+            
+            <div>
+              <h3 class="font-semibold text-navy-900 mb-2 flex items-center gap-2">
+                <svg class="w-5 h-5 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                </svg>
+                Inconvénients
+              </h3>
+              <ul class="space-y-2">
+                {solution2.cons.map((con: string) => (
+                  <li class="flex items-start gap-2 text-sm text-navy-600">
+                    <svg class="w-4 h-4 text-red-400 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4"/>
+                    </svg>
+                    {con}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Verdict -->
+        <div class="bg-gradient-to-r from-navy-800 to-navy-900 rounded-2xl p-8 text-white mb-12">
+          <h2 class="font-display font-bold text-2xl mb-4 flex items-center gap-3">
+            <svg class="w-8 h-8 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+            </svg>
+            Notre verdict
+          </h2>
+          <p class="text-navy-200 text-lg leading-relaxed">{comparison.data.verdict}</p>
+        </div>
+        
+        <!-- Content -->
+        <div class="prose-custom mb-12">
+          <Content />
+        </div>
+        
+        <!-- Author Box -->
+        <AuthorBox 
+          name={comparison.data.author.name}
+          role={comparison.data.author.role}
+          image=""
+          bio="Expert en rénovation énergétique, accompagne les particuliers dans leurs projets."
+          slug={comparison.data.author.slug}
+        />
+        
+        <!-- CTA -->
+        <div class="mt-12 p-8 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-2xl text-white text-center">
+          <h2 class="text-2xl font-display font-bold mb-4">
+            Besoin d'un conseil personnalisé ?
+          </h2>
+          <p class="text-emerald-100 mb-6 max-w-lg mx-auto">
+            Chaque situation est unique. Simulez vos économies et obtenez l'avis d'un expert pour votre cas précis.
+          </p>
+          <a href="/simulateur" class="inline-flex items-center gap-2 px-6 py-3 bg-white text-emerald-600 font-semibold rounded-lg hover:bg-emerald-50 transition-colors">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"/>
+            </svg>
+            Calculer mes économies
+          </a>
+        </div>
+      </div>
+    </div>
+  </article>
+</Layout>

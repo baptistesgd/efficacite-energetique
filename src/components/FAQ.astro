@@ -1,0 +1,112 @@
+---
+const faqs = [
+  {
+    question: "Qu'est-ce que MaPrimeRénov' 2026 ?",
+    answer: "MaPrimeRénov' est une aide de l'État pour financer vos travaux de rénovation énergétique. En 2026, les montants ont été revalorisés jusqu'à 90% du coût des travaux pour les ménages modestes. Cette aide est cumulable avec les CEE (Certificats d'Économie d'Énergie) et l'éco-PTZ."
+  },
+  {
+    question: "Comment savoir si je suis éligible aux aides ?",
+    answer: "Votre éligibilité dépend de plusieurs critères : vos revenus fiscaux, votre zone géographique, le type de travaux et l'ancienneté de votre logement (plus de 15 ans). Notre simulateur gratuit vous permet d'estimer vos aides en 2 minutes."
+  },
+  {
+    question: "Qu'est-ce que la certification RGE ?",
+    answer: "RGE signifie 'Reconnu Garant de l'Environnement'. C'est une certification délivrée par l'État qui garantit le professionnalisme et la compétence des artisans en matière de travaux de rénovation énergétique. Elle est obligatoire pour bénéficier des aides publiques."
+  },
+  {
+    question: "Combien coûte une installation de panneaux solaires ?",
+    answer: "En 2026, une installation photovoltaïque de 3 kWc (environ 15m² de toiture) coûte entre 7 000€ et 10 000€ TTC pose comprise. Avec les aides (prime autoconsommation, TVA réduite), le coût net peut descendre à 5 000-7 000€. Le retour sur investissement est généralement de 8 à 12 ans."
+  },
+  {
+    question: "Pompe à chaleur ou chaudière à granulés : que choisir ?",
+    answer: "Le choix dépend de votre situation. La PAC air-eau est idéale pour les régions tempérées et offre la climatisation en été. La chaudière à granulés convient mieux aux régions froides et aux maisons avec espace de stockage. Consultez notre comparatif détaillé ou demandez l'avis d'un expert."
+  },
+  {
+    question: "Mes données sont-elles sécurisées ?",
+    answer: "Absolument. Vos données personnelles sont protégées conformément au RGPD. Nous ne les revendons jamais à des tiers. Elles sont uniquement utilisées pour vous mettre en relation avec un expert certifié de votre région."
+  }
+];
+
+// JSON-LD FAQ Schema
+const faqSchema = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": faqs.map(faq => ({
+    "@type": "Question",
+    "name": faq.question,
+    "acceptedAnswer": {
+      "@type": "Answer",
+      "text": faq.answer
+    }
+  }))
+};
+---
+
+<section class="section-padding bg-navy-50">
+  <div class="container-custom mx-auto">
+    <div class="text-center mb-12">
+      <h2 class="text-3xl md:text-4xl font-display font-bold text-navy-900 mb-4">
+        Questions <span class="gradient-text">fréquentes</span>
+      </h2>
+      <p class="text-lg text-navy-600 max-w-2xl mx-auto">
+        Tout ce que vous devez savoir sur la rénovation énergétique et les aides disponibles.
+      </p>
+    </div>
+    
+    <div class="max-w-3xl mx-auto space-y-4">
+      {faqs.map((faq, index) => (
+        <div class="faq-item card overflow-hidden">
+          <button 
+            class="faq-trigger w-full px-6 py-5 text-left flex items-center justify-between gap-4 hover:bg-navy-50/50 transition-colors"
+            aria-expanded="false"
+            aria-controls={`faq-answer-${index}`}
+          >
+            <span class="font-semibold text-navy-900">{faq.question}</span>
+            <svg class="faq-icon w-5 h-5 text-emerald-500 shrink-0 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+            </svg>
+          </button>
+          <div 
+            id={`faq-answer-${index}`}
+            class="faq-content hidden px-6 pb-5"
+          >
+            <p class="text-navy-600 leading-relaxed">{faq.answer}</p>
+          </div>
+        </div>
+      ))}
+    </div>
+    
+    <div class="text-center mt-12">
+      <p class="text-navy-600 mb-4">Vous avez d'autres questions ?</p>
+      <a href="/simulateur" class="btn-primary">
+        Parler à un expert gratuitement
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ Schema -->
+<script type="application/ld+json" set:html={JSON.stringify(faqSchema)} />
+
+<script>
+  document.querySelectorAll('.faq-trigger').forEach(trigger => {
+    trigger.addEventListener('click', () => {
+      const content = trigger.nextElementSibling;
+      const icon = trigger.querySelector('.faq-icon');
+      const isOpen = trigger.getAttribute('aria-expanded') === 'true';
+      
+      // Close all others
+      document.querySelectorAll('.faq-trigger').forEach(t => {
+        t.setAttribute('aria-expanded', 'false');
+        t.nextElementSibling?.classList.add('hidden');
+        t.querySelector('.faq-icon')?.classList.remove('rotate-180');
+      });
+      
+      // Toggle current
+      if (!isOpen) {
+        trigger.setAttribute('aria-expanded', 'true');
+        content?.classList.remove('hidden');
+        icon?.classList.add('rotate-180');
+      }
+    });
+  });
+</script>

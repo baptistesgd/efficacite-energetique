@@ -1,0 +1,66 @@
+---
+import '../styles/global.css';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import StickyButton from '../components/StickyButton.astro';
+import JsonLd from '../components/JsonLd.astro';
+
+interface Props {
+  title: string;
+  description: string;
+  canonical?: string;
+  ogImage?: string;
+  jsonLd?: object;
+}
+
+const { 
+  title, 
+  description, 
+  canonical = Astro.url.href,
+  ogImage = '/images/og-default.jpg',
+  jsonLd
+} = Astro.props;
+
+const siteName = "ÉcoRénov' - Simulateur Économies Énergie";
+---
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content={description} />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href={canonical} />
+  
+  <!-- Open Graph -->
+  <meta property="og:title" content={title} />
+  <meta property="og:description" content={description} />
+  <meta property="og:image" content={ogImage} />
+  <meta property="og:url" content={canonical} />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content={siteName} />
+  <meta property="og:locale" content="fr_FR" />
+  
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content={title} />
+  <meta name="twitter:description" content={description} />
+  <meta name="twitter:image" content={ogImage} />
+  
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="sitemap" href="/sitemap.xml" />
+  
+  <title>{title} | {siteName}</title>
+  
+  {jsonLd && <JsonLd data={jsonLd} />}
+</head>
+<body class="min-h-screen flex flex-col">
+  <Header />
+  <main class="flex-grow">
+    <slot />
+  </main>
+  <Footer />
+  <StickyButton />
+</body>
+</html>

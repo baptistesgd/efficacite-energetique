@@ -1,0 +1,535 @@
+---
+// Prix du kWh actualisés pour 2026 (source: CRE - février 2026)
+const energyPrices = {
+  electricity: { label: 'Électricité', price: 0.2516, unit: '€/kWh' },
+  gas: { label: 'Gaz naturel', price: 0.1284, unit: '€/kWh' },
+  oil: { label: 'Fioul domestique', price: 0.1350, unit: '€/kWh' },
+  propane: { label: 'Propane (GPL)', price: 0.1820, unit: '€/kWh' }
+};
+
+// URL Webhook Make.com - à personnaliser
+const webhookUrl = 'VOTRE_WEBHOOK_MAKE_URL';
+---
+
+<section id="simulateur" class="section-padding bg-gradient-to-b from-white to-navy-50">
+  <div class="container-custom mx-auto">
+    <div class="text-center mb-12">
+      <span class="trust-badge mb-4">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"/>
+        </svg>
+        Simulateur gratuit
+      </span>
+      <h2 class="text-3xl md:text-4xl lg:text-5xl font-display font-bold text-navy-900 mb-4">
+        Calculez vos <span class="gradient-text">économies</span> en 2 minutes
+      </h2>
+      <p class="text-lg text-navy-600 max-w-2xl mx-auto">
+        Découvrez combien vous pouvez économiser grâce à la rénovation énergétique et aux panneaux solaires.
+        Prix du kWh actualisés en février 2026.
+      </p>
+    </div>
+    
+    <div class="max-w-4xl mx-auto">
+      <div class="card p-6 md:p-10">
+        <!-- Step indicator -->
+        <div class="flex items-center justify-center gap-4 mb-10">
+          <div class="step-indicator active" data-step="1">
+            <span class="step-number">1</span>
+            <span class="step-label">Votre logement</span>
+          </div>
+          <div class="step-line"></div>
+          <div class="step-indicator" data-step="2">
+            <span class="step-number">2</span>
+            <span class="step-label">Votre énergie</span>
+          </div>
+          <div class="step-line"></div>
+          <div class="step-indicator" data-step="3">
+            <span class="step-number">3</span>
+            <span class="step-label">Vos résultats</span>
+          </div>
+        </div>
+        
+        <!-- Simulator Form -->
+        <form id="simulator-form" class="space-y-8">
+          <!-- Hidden webhook URL -->
+          <input type="hidden" name="webhook_url" value={webhookUrl} />
+          
+          <!-- Step 1: Surface -->
+          <div class="simulator-step" data-step="1">
+            <div class="space-y-6">
+              <div>
+                <label class="block text-navy-900 font-semibold mb-4">
+                  Surface de votre logement : <span id="surface-value" class="text-emerald-600">100 m²</span>
+                </label>
+                <input 
+                  type="range" 
+                  id="surface" 
+                  name="surface"
+                  min="30" 
+                  max="300" 
+                  value="100" 
+                  step="10"
+                  class="w-full"
+                />
+                <div class="flex justify-between text-sm text-navy-400 mt-2">
+                  <span>30 m²</span>
+                  <span>300 m²</span>
+                </div>
+              </div>
+              
+              <div>
+                <label class="block text-navy-900 font-semibold mb-4">
+                  Surface de toiture disponible (panneaux solaires) : <span id="roof-value" class="text-emerald-600">30 m²</span>
+                </label>
+                <input 
+                  type="range" 
+                  id="roof-surface" 
+                  name="roof_surface"
+                  min="0" 
+                  max="100" 
+                  value="30" 
+                  step="5"
+                  class="w-full"
+                />
+                <div class="flex justify-between text-sm text-navy-400 mt-2">
+                  <span>0 m²</span>
+                  <span>100 m²</span>
+                </div>
+              </div>
+            </div>
+            
+            <button type="button" class="btn-primary w-full mt-8" onclick="nextStep(2)">
+              Continuer
+              <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+              </svg>
+            </button>
+          </div>
+          
+          <!-- Step 2: Energy Type -->
+          <div class="simulator-step hidden" data-step="2">
+            <div class="space-y-4">
+              <label class="block text-navy-900 font-semibold mb-4">
+                Type d'énergie principal actuel :
+              </label>
+              
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                {Object.entries(energyPrices).map(([key, energy]) => (
+                  <label class="energy-option cursor-pointer">
+                    <input 
+                      type="radio" 
+                      name="energy_type" 
+                      value={key}
+                      data-price={energy.price}
+                      class="hidden"
+                    />
+                    <div class="energy-card p-4 border-2 border-navy-200 rounded-xl hover:border-emerald-400 transition-all">
+                      <div class="flex items-center justify-between">
+                        <div>
+                          <p class="font-semibold text-navy-900">{energy.label}</p>
+                          <p class="text-sm text-navy-500">{energy.price.toFixed(4)} {energy.unit}</p>
+                        </div>
+                        <div class="energy-check w-6 h-6 rounded-full border-2 border-navy-300 flex items-center justify-center">
+                          <svg class="w-4 h-4 text-white hidden" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+                          </svg>
+                        </div>
+                      </div>
+                    </div>
+                  </label>
+                ))}
+              </div>
+              
+              <p class="text-sm text-navy-500 mt-4">
+                * Prix moyens constatés en France métropolitaine - Février 2026 (source: CRE)
+              </p>
+            </div>
+            
+            <div class="flex gap-4 mt-8">
+              <button type="button" class="btn-secondary flex-1" onclick="prevStep(1)">
+                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+                </svg>
+                Retour
+              </button>
+              <button type="button" class="btn-primary flex-1" onclick="calculateAndShowResults()">
+                Voir mes économies
+                <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                </svg>
+              </button>
+            </div>
+          </div>
+          
+          <!-- Step 3: Results & Lead Capture -->
+          <div class="simulator-step hidden" data-step="3">
+            <!-- Results Display -->
+            <div class="bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-2xl p-6 md:p-8 text-white mb-8">
+              <div class="text-center">
+                <p class="text-emerald-100 text-sm font-medium uppercase tracking-wide mb-2">Estimation de vos économies annuelles</p>
+                <div class="flex items-center justify-center gap-2">
+                  <span id="savings-amount" class="text-4xl md:text-6xl font-display font-bold">0</span>
+                  <span class="text-2xl md:text-3xl font-semibold">€/an</span>
+                </div>
+                <p class="text-emerald-100 mt-4 text-sm">
+                  Grâce à l'isolation et aux panneaux solaires
+                </p>
+              </div>
+              
+              <div class="grid grid-cols-2 gap-4 mt-8 pt-6 border-t border-emerald-400/30">
+                <div class="text-center">
+                  <p class="text-emerald-100 text-sm">Économies isolation</p>
+                  <p id="isolation-savings" class="text-2xl font-bold">0 €</p>
+                </div>
+                <div class="text-center">
+                  <p class="text-emerald-100 text-sm">Production solaire</p>
+                  <p id="solar-savings" class="text-2xl font-bold">0 €</p>
+                </div>
+              </div>
+            </div>
+            
+            <div class="bg-amber-50 border border-amber-200 rounded-xl p-4 mb-8">
+              <div class="flex items-start gap-3">
+                <svg class="w-6 h-6 text-amber-500 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+                </svg>
+                <div>
+                  <p class="font-semibold text-amber-800">Vérifiez votre éligibilité MaPrimeRénov' 2026</p>
+                  <p class="text-amber-700 text-sm">Jusqu'à <strong>90% des travaux</strong> pris en charge selon vos revenus.</p>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Lead Capture Form -->
+            <div class="space-y-6">
+              <h3 class="font-display font-semibold text-xl text-navy-900">
+                Recevez votre étude personnalisée gratuite
+              </h3>
+              
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label for="firstname" class="block text-sm font-medium text-navy-700 mb-2">Prénom *</label>
+                  <input 
+                    type="text" 
+                    id="firstname" 
+                    name="firstname" 
+                    required
+                    class="input-field"
+                    placeholder="Jean"
+                  />
+                </div>
+                <div>
+                  <label for="lastname" class="block text-sm font-medium text-navy-700 mb-2">Nom *</label>
+                  <input 
+                    type="text" 
+                    id="lastname" 
+                    name="lastname" 
+                    required
+                    class="input-field"
+                    placeholder="Dupont"
+                  />
+                </div>
+              </div>
+              
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label for="phone" class="block text-sm font-medium text-navy-700 mb-2">Téléphone *</label>
+                  <input 
+                    type="tel" 
+                    id="phone" 
+                    name="phone" 
+                    required
+                    pattern="^(?:(?:\+|00)33|0)\s*[1-9](?:[\s.-]*\d{2}){4}$"
+                    class="input-field"
+                    placeholder="06 12 34 56 78"
+                  />
+                </div>
+                <div>
+                  <label for="postal_code" class="block text-sm font-medium text-navy-700 mb-2">Code postal *</label>
+                  <input 
+                    type="text" 
+                    id="postal_code" 
+                    name="postal_code" 
+                    required
+                    pattern="^[0-9]{5}$"
+                    class="input-field"
+                    placeholder="75001"
+                  />
+                </div>
+              </div>
+              
+              <div>
+                <label for="email" class="block text-sm font-medium text-navy-700 mb-2">Email *</label>
+                <input 
+                  type="email" 
+                  id="email" 
+                  name="email" 
+                  required
+                  class="input-field"
+                  placeholder="jean.dupont@email.fr"
+                />
+              </div>
+              
+              <!-- Consent Checkbox -->
+              <div class="bg-navy-50 rounded-xl p-4">
+                <label class="flex items-start gap-3 cursor-pointer">
+                  <input 
+                    type="checkbox" 
+                    id="consent" 
+                    name="consent" 
+                    required
+                    class="checkbox-custom mt-0.5"
+                  />
+                  <span class="text-sm text-navy-600 leading-relaxed">
+                    J'accepte d'être recontacté gratuitement par un expert certifié RGE de ma région pour valider mon étude de faisabilité et mes aides d'État. *
+                  </span>
+                </label>
+              </div>
+              
+              <p class="text-xs text-navy-500">
+                Vos données sont protégées conformément au RGPD. Consultez notre <a href="/politique-confidentialite" class="text-emerald-600 hover:underline">politique de confidentialité</a>.
+              </p>
+              
+              <button type="submit" class="btn-primary w-full py-4 text-lg">
+                <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+                </svg>
+                Vérifier mon éligibilité gratuite
+              </button>
+            </div>
+            
+            <button type="button" class="btn-secondary w-full mt-4" onclick="prevStep(2)">
+              <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+              </svg>
+              Modifier mes données
+            </button>
+          </div>
+        </form>
+        
+        <!-- Success Message -->
+        <div id="success-message" class="hidden text-center py-12">
+          <div class="w-20 h-20 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-6">
+            <svg class="w-10 h-10 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+            </svg>
+          </div>
+          <h3 class="text-2xl font-display font-bold text-navy-900 mb-4">
+            Demande envoyée avec succès !
+          </h3>
+          <p class="text-navy-600 max-w-md mx-auto">
+            Un expert certifié RGE de votre région vous contactera sous 24h pour valider votre éligibilité aux aides MaPrimeRénov' 2026.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .step-indicator {
+    @apply flex flex-col items-center gap-2;
+  }
+  
+  .step-number {
+    @apply w-10 h-10 rounded-full bg-navy-100 text-navy-400 flex items-center justify-center font-semibold transition-all;
+  }
+  
+  .step-label {
+    @apply text-xs text-navy-400 font-medium hidden sm:block;
+  }
+  
+  .step-indicator.active .step-number {
+    @apply bg-emerald-500 text-white shadow-lg shadow-emerald-500/30;
+  }
+  
+  .step-indicator.active .step-label {
+    @apply text-emerald-600;
+  }
+  
+  .step-indicator.completed .step-number {
+    @apply bg-emerald-500 text-white;
+  }
+  
+  .step-line {
+    @apply flex-1 h-1 bg-navy-100 rounded max-w-[60px];
+  }
+  
+  .energy-option input:checked + .energy-card {
+    @apply border-emerald-500 bg-emerald-50;
+  }
+  
+  .energy-option input:checked + .energy-card .energy-check {
+    @apply bg-emerald-500 border-emerald-500;
+  }
+  
+  .energy-option input:checked + .energy-card .energy-check svg {
+    @apply block;
+  }
+</style>
+
+<script define:vars={{ energyPrices }}>
+  // State
+  let currentStep = 1;
+  let simulatorData = {
+    surface: 100,
+    roofSurface: 30,
+    energyType: 'electricity',
+    energyPrice: 0.2516
+  };
+  
+  // DOM Elements
+  const surfaceSlider = document.getElementById('surface');
+  const roofSlider = document.getElementById('roof-surface');
+  const surfaceValue = document.getElementById('surface-value');
+  const roofValue = document.getElementById('roof-value');
+  const form = document.getElementById('simulator-form');
+  
+  // Update display values
+  surfaceSlider?.addEventListener('input', (e) => {
+    const value = e.target.value;
+    surfaceValue.textContent = `${value} m²`;
+    simulatorData.surface = parseInt(value);
+  });
+  
+  roofSlider?.addEventListener('input', (e) => {
+    const value = e.target.value;
+    roofValue.textContent = `${value} m²`;
+    simulatorData.roofSurface = parseInt(value);
+  });
+  
+  // Energy type selection
+  document.querySelectorAll('input[name="energy_type"]').forEach(radio => {
+    radio.addEventListener('change', (e) => {
+      simulatorData.energyType = e.target.value;
+      simulatorData.energyPrice = parseFloat(e.target.dataset.price);
+    });
+  });
+  
+  // Navigation functions
+  window.nextStep = function(step) {
+    showStep(step);
+  };
+  
+  window.prevStep = function(step) {
+    showStep(step);
+  };
+  
+  function showStep(step) {
+    // Hide all steps
+    document.querySelectorAll('.simulator-step').forEach(el => {
+      el.classList.add('hidden');
+    });
+    
+    // Show target step
+    document.querySelector(`.simulator-step[data-step="${step}"]`)?.classList.remove('hidden');
+    
+    // Update indicators
+    document.querySelectorAll('.step-indicator').forEach(el => {
+      const stepNum = parseInt(el.dataset.step);
+      el.classList.remove('active', 'completed');
+      if (stepNum === step) {
+        el.classList.add('active');
+      } else if (stepNum < step) {
+        el.classList.add('completed');
+      }
+    });
+    
+    currentStep = step;
+  }
+  
+  // Calculate savings
+  window.calculateAndShowResults = function() {
+    // Check if energy type is selected
+    const selectedEnergy = document.querySelector('input[name="energy_type"]:checked');
+    if (!selectedEnergy) {
+      alert('Veuillez sélectionner votre type d\'énergie actuel');
+      return;
+    }
+    
+    simulatorData.energyType = selectedEnergy.value;
+    simulatorData.energyPrice = parseFloat(selectedEnergy.dataset.price);
+    
+    // Calculate savings
+    // Formule: Consommation moyenne = surface * 150 kWh/m²/an (logement moyen)
+    // Économies isolation = 30% de réduction
+    // Production solaire = surface toiture * 150 kWh/m²/an * prix revente/autoconso
+    
+    const avgConsumption = simulatorData.surface * 150; // kWh/an
+    const currentCost = avgConsumption * simulatorData.energyPrice;
+    
+    // Isolation savings (30% reduction)
+    const isolationSavings = Math.round(currentCost * 0.30);
+    
+    // Solar production (150 kWh/m²/an, autoconsommation + revente)
+    const solarProduction = simulatorData.roofSurface * 150;
+    const solarValue = 0.15; // €/kWh moyenne (autoconso + revente)
+    const solarSavings = Math.round(solarProduction * solarValue);
+    
+    const totalSavings = isolationSavings + solarSavings;
+    
+    // Update display
+    document.getElementById('savings-amount').textContent = totalSavings.toLocaleString('fr-FR');
+    document.getElementById('isolation-savings').textContent = `${isolationSavings.toLocaleString('fr-FR')} €`;
+    document.getElementById('solar-savings').textContent = `${solarSavings.toLocaleString('fr-FR')} €`;
+    
+    // Store for form submission
+    simulatorData.totalSavings = totalSavings;
+    simulatorData.isolationSavings = isolationSavings;
+    simulatorData.solarSavings = solarSavings;
+    
+    showStep(3);
+  };
+  
+  // Form submission
+  form?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    
+    const formData = new FormData(form);
+    const webhookUrl = formData.get('webhook_url');
+    
+    const data = {
+      firstname: formData.get('firstname'),
+      lastname: formData.get('lastname'),
+      phone: formData.get('phone'),
+      postal_code: formData.get('postal_code'),
+      email: formData.get('email'),
+      consent: formData.get('consent') === 'on',
+      surface: simulatorData.surface,
+      roof_surface: simulatorData.roofSurface,
+      energy_type: simulatorData.energyType,
+      total_savings: simulatorData.totalSavings,
+      isolation_savings: simulatorData.isolationSavings,
+      solar_savings: simulatorData.solarSavings,
+      submitted_at: new Date().toISOString()
+    };
+    
+    // Send to webhook if configured
+    if (webhookUrl && webhookUrl !== 'VOTRE_WEBHOOK_MAKE_URL') {
+      try {
+        await fetch(webhookUrl, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(data)
+        });
+      } catch (error) {
+        console.log('Webhook error:', error);
+      }
+    }
+    
+    // Show success message
+    form.classList.add('hidden');
+    document.getElementById('success-message')?.classList.remove('hidden');
+    
+    // Track conversion (placeholder for analytics)
+    if (typeof gtag !== 'undefined') {
+      gtag('event', 'generate_lead', {
+        'event_category': 'Lead',
+        'event_label': 'Simulateur',
+        'value': simulatorData.totalSavings
+      });
+    }
+  });
+</script>

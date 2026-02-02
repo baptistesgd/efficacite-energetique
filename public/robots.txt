@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://ecorenov-leads.vercel.app/sitemap-index.xml
