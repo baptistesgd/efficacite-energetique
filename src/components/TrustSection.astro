@@ -35,11 +35,8 @@ const trustItems = [
     </div>
     
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
-      {trustItems.map((item, index) => (
-        <div 
-          class="card card-hover p-6 text-center"
-          style={`animation-delay: ${index * 0.1}s`}
-        >
+      {trustItems.map((item) => (
+        <div class="card card-hover p-6 text-center">
           <div class="w-16 h-16 bg-emerald-100 rounded-2xl flex items-center justify-center mx-auto mb-6">
             {item.icon === 'euro' && (
               <svg class="w-8 h-8 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -72,30 +69,14 @@ const trustItems = [
       ))}
     </div>
     
-    <!-- Partners/Sources -->
-    <div class="mt-16 pt-12 border-t border-navy-100">
+    <div class="mt-16 pt-12 border-t border-gray-200">
       <p class="text-center text-navy-500 text-sm mb-6">
         Données et calculs basés sur les sources officielles :
       </p>
       <div class="flex flex-wrap items-center justify-center gap-8 opacity-60">
-        <div class="flex items-center gap-2 text-navy-600">
-          <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 24 24">
-            <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
-          </svg>
-          <span class="font-semibold">ADEME</span>
-        </div>
-        <div class="flex items-center gap-2 text-navy-600">
-          <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 24 24">
-            <path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h14a2 2 0 012 2v14a2 2 0 01-2 2zM5 5v14h14V5H5z"/>
-          </svg>
-          <span class="font-semibold">Ministère de la Transition Écologique</span>
-        </div>
-        <div class="flex items-center gap-2 text-navy-600">
-          <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 24 24">
-            <path d="M12 2a10 10 0 100 20 10 10 0 000-20zm0 18a8 8 0 110-16 8 8 0 010 16z"/>
-          </svg>
-          <span class="font-semibold">CRE</span>
-        </div>
+        <span class="font-semibold text-navy-600">ADEME</span>
+        <span class="font-semibold text-navy-600">Ministère de la Transition Écologique</span>
+        <span class="font-semibold text-navy-600">CRE</span>
       </div>
     </div>
   </div>

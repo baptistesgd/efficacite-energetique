@@ -2,15 +2,14 @@
 interface Props {
   name: string;
   role: string;
-  image: string;
   bio: string;
   slug: string;
 }
 
-const { name, role, image, bio, slug } = Astro.props;
+const { name, role, bio, slug } = Astro.props;
 ---
 
-<div class="bg-navy-50 rounded-2xl p-6 md:p-8 border border-navy-100">
+<div class="bg-gray-50 rounded-2xl p-6 md:p-8 border border-gray-100">
   <div class="flex flex-col sm:flex-row items-start gap-6">
     <a href={`/experts/${slug}`} class="shrink-0">
       <div class="w-20 h-20 md:w-24 md:h-24 rounded-2xl bg-gradient-to-br from-emerald-400 to-emerald-600 flex items-center justify-center text-white text-2xl font-bold shadow-lg shadow-emerald-500/30">

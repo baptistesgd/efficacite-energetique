@@ -5,23 +5,9 @@ import TrustSection from '../components/TrustSection.astro';
 
 const pageTitle = "Simulateur d'économies d'énergie gratuit";
 const pageDescription = "Calculez vos économies d'énergie en 2 minutes. Estimez vos gains grâce à l'isolation et aux panneaux solaires. Vérifiez votre éligibilité MaPrimeRénov' 2026.";
-
-const jsonLd = {
-  "@context": "https://schema.org",
-  "@type": "WebApplication",
-  "name": "Simulateur d'économies d'énergie",
-  "description": pageDescription,
-  "applicationCategory": "UtilitiesApplication",
-  "operatingSystem": "Web",
-  "offers": {
-    "@type": "Offer",
-    "price": "0",
-    "priceCurrency": "EUR"
-  }
-};
 ---
 
-<Layout title={pageTitle} description={pageDescription} jsonLd={jsonLd}>
+<Layout title={pageTitle} description={pageDescription}>
   <Simulator />
   <TrustSection />
 </Layout>

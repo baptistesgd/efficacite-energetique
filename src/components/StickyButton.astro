@@ -1,38 +1,28 @@
 ---
-// Bouton flottant visible sur toutes les pages
+// Bouton flottant "Calculer mes aides" visible sur toutes les pages
 ---
 
 <div class="sticky-btn">
   <a 
     href="/simulateur" 
     class="flex items-center justify-center gap-2 px-6 py-4 bg-emerald-500 text-white font-semibold rounded-full shadow-2xl shadow-emerald-500/40 hover:bg-emerald-600 hover:shadow-emerald-600/50 transition-all duration-300 transform hover:scale-105"
+    style="animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;"
   >
     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"/>
     </svg>
-    <span class="hidden sm:inline">Calculer mes économies</span>
+    <span class="hidden sm:inline">Calculer mes aides</span>
     <span class="sm:hidden">Simuler</span>
   </a>
 </div>
 
 <style>
-  .sticky-btn {
-    position: fixed;
-    bottom: 1.5rem;
-    right: 1.5rem;
-    z-index: 50;
-  }
-  
-  @media (max-width: 640px) {
-    .sticky-btn {
-      left: 1rem;
-      right: 1rem;
-      bottom: 1rem;
+  @keyframes pulse {
+    0%, 100% {
+      opacity: 1;
     }
-    
-    .sticky-btn a {
-      width: 100%;
-      justify-content: center;
+    50% {
+      opacity: 0.85;
     }
   }
 </style>

@@ -14,8 +14,7 @@ const blogCollection = defineCollection({
     }),
     category: z.string(),
     tags: z.array(z.string()),
-    featured: z.boolean().default(false),
-    image: z.string().optional()
+    featured: z.boolean().default(false)
   })
 });
 
@@ -29,7 +28,7 @@ const expertsCollection = defineCollection({
     certifications: z.array(z.string()),
     specialties: z.array(z.string()),
     experience: z.string(),
-    image: z.string().optional()
+    sources: z.array(z.string()).optional()
   })
 });
 
@@ -41,7 +40,6 @@ const comparisonsCollection = defineCollection({
     pubDate: z.date(),
     solution1: z.object({
       name: z.string(),
-      icon: z.string(),
       pros: z.array(z.string()),
       cons: z.array(z.string()),
       price: z.string(),
@@ -50,7 +48,6 @@ const comparisonsCollection = defineCollection({
     }),
     solution2: z.object({
       name: z.string(),
-      icon: z.string(),
       pros: z.array(z.string()),
       cons: z.array(z.string()),
       price: z.string(),

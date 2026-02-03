@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://ecorenov-leads.vercel.app/sitemap-index.xml
+Sitemap: https://efficacite-energetique.vercel.app/sitemap-index.xml

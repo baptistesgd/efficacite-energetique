@@ -14,25 +14,12 @@ export async function getStaticPaths() {
 const { comparison } = Astro.props;
 const { Content } = await comparison.render();
 const { solution1, solution2 } = comparison.data;
-
-const jsonLd = {
-  "@context": "https://schema.org",
-  "@type": "Article",
-  "headline": comparison.data.title,
-  "description": comparison.data.description,
-  "datePublished": comparison.data.pubDate.toISOString(),
-  "author": {
-    "@type": "Person",
-    "name": comparison.data.author.name
-  }
-};
 ---
 
-<Layout title={comparison.data.title} description={comparison.data.description} jsonLd={jsonLd}>
+<Layout title={comparison.data.title} description={comparison.data.description}>
   <article class="section-padding">
     <div class="container-custom mx-auto">
       <div class="max-w-4xl mx-auto">
-        <!-- Header -->
         <header class="text-center mb-12">
           <h1 class="text-3xl md:text-4xl lg:text-5xl font-display font-bold text-navy-900 mb-6">
             {comparison.data.title}
@@ -42,9 +29,7 @@ const jsonLd = {
           </p>
         </header>
         
-        <!-- Comparison Cards -->
         <div class="grid md:grid-cols-2 gap-6 mb-12">
-          <!-- Solution 1 -->
           <div class="card p-6 border-2 border-emerald-200">
             <div class="text-center mb-6">
               <div class="w-16 h-16 bg-emerald-100 rounded-xl flex items-center justify-center mx-auto mb-4">
@@ -60,25 +45,10 @@ const jsonLd = {
                 <p class="text-sm text-emerald-600">Prix indicatif</p>
                 <p class="font-bold text-emerald-700">{solution1.price}</p>
               </div>
-              <div class="grid grid-cols-2 gap-3 text-sm">
-                <div class="bg-navy-50 rounded-lg p-3 text-center">
-                  <p class="text-navy-500">Économies</p>
-                  <p class="font-semibold text-navy-700">{solution1.savings}</p>
-                </div>
-                <div class="bg-navy-50 rounded-lg p-3 text-center">
-                  <p class="text-navy-500">Durée de vie</p>
-                  <p class="font-semibold text-navy-700">{solution1.lifespan}</p>
-                </div>
-              </div>
             </div>
             
             <div class="mb-4">
-              <h3 class="font-semibold text-navy-900 mb-2 flex items-center gap-2">
-                <svg class="w-5 h-5 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
-                </svg>
-                Avantages
-              </h3>
+              <h3 class="font-semibold text-navy-900 mb-2">Avantages</h3>
               <ul class="space-y-2">
                 {solution1.pros.map((pro: string) => (
                   <li class="flex items-start gap-2 text-sm text-navy-600">
@@ -92,12 +62,7 @@ const jsonLd = {
             </div>
             
             <div>
-              <h3 class="font-semibold text-navy-900 mb-2 flex items-center gap-2">
-                <svg class="w-5 h-5 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-                </svg>
-                Inconvénients
-              </h3>
+              <h3 class="font-semibold text-navy-900 mb-2">Inconvénients</h3>
               <ul class="space-y-2">
                 {solution1.cons.map((con: string) => (
                   <li class="flex items-start gap-2 text-sm text-navy-600">
@@ -111,7 +76,6 @@ const jsonLd = {
             </div>
           </div>
           
-          <!-- Solution 2 -->
           <div class="card p-6 border-2 border-amber-200">
             <div class="text-center mb-6">
               <div class="w-16 h-16 bg-amber-100 rounded-xl flex items-center justify-center mx-auto mb-4">
@@ -127,25 +91,10 @@ const jsonLd = {
                 <p class="text-sm text-amber-600">Prix indicatif</p>
                 <p class="font-bold text-amber-700">{solution2.price}</p>
               </div>
-              <div class="grid grid-cols-2 gap-3 text-sm">
-                <div class="bg-navy-50 rounded-lg p-3 text-center">
-                  <p class="text-navy-500">Économies</p>
-                  <p class="font-semibold text-navy-700">{solution2.savings}</p>
-                </div>
-                <div class="bg-navy-50 rounded-lg p-3 text-center">
-                  <p class="text-navy-500">Durée de vie</p>
-                  <p class="font-semibold text-navy-700">{solution2.lifespan}</p>
-                </div>
-              </div>
             </div>
             
             <div class="mb-4">
-              <h3 class="font-semibold text-navy-900 mb-2 flex items-center gap-2">
-                <svg class="w-5 h-5 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
-                </svg>
-                Avantages
-              </h3>
+              <h3 class="font-semibold text-navy-900 mb-2">Avantages</h3>
               <ul class="space-y-2">
                 {solution2.pros.map((pro: string) => (
                   <li class="flex items-start gap-2 text-sm text-navy-600">
@@ -159,12 +108,7 @@ const jsonLd = {
             </div>
             
             <div>
-              <h3 class="font-semibold text-navy-900 mb-2 flex items-center gap-2">
-                <svg class="w-5 h-5 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-                </svg>
-                Inconvénients
-              </h3>
+              <h3 class="font-semibold text-navy-900 mb-2">Inconvénients</h3>
               <ul class="space-y-2">
                 {solution2.cons.map((con: string) => (
                   <li class="flex items-start gap-2 text-sm text-navy-600">
@@ -179,44 +123,31 @@ const jsonLd = {
           </div>
         </div>
         
-        <!-- Verdict -->
         <div class="bg-gradient-to-r from-navy-800 to-navy-900 rounded-2xl p-8 text-white mb-12">
-          <h2 class="font-display font-bold text-2xl mb-4 flex items-center gap-3">
-            <svg class="w-8 h-8 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-            </svg>
-            Notre verdict
-          </h2>
-          <p class="text-navy-200 text-lg leading-relaxed">{comparison.data.verdict}</p>
+          <h2 class="font-display font-bold text-2xl mb-4">Notre verdict</h2>
+          <p class="text-gray-300 text-lg leading-relaxed">{comparison.data.verdict}</p>
         </div>
         
-        <!-- Content -->
-        <div class="prose-custom mb-12">
+        <div class="prose prose-lg prose-navy max-w-none mb-12">
           <Content />
         </div>
         
-        <!-- Author Box -->
         <AuthorBox 
           name={comparison.data.author.name}
           role={comparison.data.author.role}
-          image=""
-          bio="Expert en rénovation énergétique, accompagne les particuliers dans leurs projets."
+          bio="Expert en rénovation énergétique."
           slug={comparison.data.author.slug}
         />
         
-        <!-- CTA -->
         <div class="mt-12 p-8 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-2xl text-white text-center">
           <h2 class="text-2xl font-display font-bold mb-4">
             Besoin d'un conseil personnalisé ?
           </h2>
-          <p class="text-emerald-100 mb-6 max-w-lg mx-auto">
-            Chaque situation est unique. Simulez vos économies et obtenez l'avis d'un expert pour votre cas précis.
+          <p class="text-emerald-100 mb-6">
+            Chaque situation est unique. Simulez vos économies et obtenez l'avis d'un expert.
           </p>
           <a href="/simulateur" class="inline-flex items-center gap-2 px-6 py-3 bg-white text-emerald-600 font-semibold rounded-lg hover:bg-emerald-50 transition-colors">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"/>
-            </svg>
-            Calculer mes économies
+            Calculer mes aides
           </a>
         </div>
       </div>

@@ -4,5 +4,5 @@ import tailwind from '@astrojs/tailwind';
 export default defineConfig({
   integrations: [tailwind()],
   output: 'static',
-  site: 'https://ecorenov-leads.vercel.app'
+  site: 'https://efficacite-energetique.vercel.app'
 });

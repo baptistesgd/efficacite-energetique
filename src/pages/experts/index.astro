@@ -5,11 +5,11 @@ import { getCollection } from 'astro:content';
 const experts = await getCollection('experts');
 
 const pageTitle = "Nos Experts - Équipe certifiée RGE";
-const pageDescription = "Découvrez notre équipe d'experts certifiés en rénovation énergétique. Ingénieurs, thermiciens et spécialistes des aides financières.";
+const pageDescription = "Découvrez notre équipe d'experts certifiés en rénovation énergétique.";
 ---
 
 <Layout title={pageTitle} description={pageDescription}>
-  <section class="section-padding bg-gradient-to-b from-navy-50 to-white">
+  <section class="section-padding bg-gradient-to-b from-gray-50 to-white">
     <div class="container-custom mx-auto">
       <div class="text-center mb-12">
         <span class="trust-badge mb-4">
@@ -22,33 +22,36 @@ const pageDescription = "Découvrez notre équipe d'experts certifiés en rénov
           Notre équipe d'<span class="gradient-text">experts</span>
         </h1>
         <p class="text-lg text-navy-600 max-w-2xl mx-auto">
-          Des professionnels qualifiés et indépendants pour vous accompagner dans votre projet de rénovation énergétique.
+          Des professionnels qualifiés et indépendants pour vous accompagner.
         </p>
       </div>
       
-      <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+      <div class="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
         {experts.map((expert) => (
-          <a href={`/experts/${expert.slug}`} class="card card-hover p-8 text-center group">
-            <div class="w-24 h-24 bg-gradient-to-br from-emerald-400 to-emerald-600 rounded-2xl flex items-center justify-center mx-auto mb-6 text-white text-2xl font-bold shadow-lg shadow-emerald-500/30 group-hover:shadow-emerald-500/50 transition-shadow">
-              {expert.data.name.split(' ').map((n: string) => n[0]).join('')}
-            </div>
-            <h2 class="text-xl font-display font-semibold text-navy-900 group-hover:text-emerald-600 transition-colors mb-2">
-              {expert.data.name}
-            </h2>
-            <p class="text-emerald-600 font-medium mb-4">{expert.data.role}</p>
-            <p class="text-navy-600 text-sm mb-6">{expert.data.bio}</p>
-            <div class="flex flex-wrap justify-center gap-2">
-              {expert.data.certifications.slice(0, 2).map((cert: string) => (
-                <span class="px-2 py-1 bg-navy-100 text-navy-600 rounded text-xs">
-                  {cert}
-                </span>
-              ))}
+          <a href={`/experts/${expert.slug}`} class="card card-hover p-8 group">
+            <div class="flex items-start gap-6">
+              <div class="w-20 h-20 bg-gradient-to-br from-emerald-400 to-emerald-600 rounded-2xl flex items-center justify-center text-white text-2xl font-bold shadow-lg shadow-emerald-500/30 shrink-0">
+                {expert.data.name.split(' ').map((n: string) => n[0]).join('')}
+              </div>
+              <div>
+                <h2 class="text-xl font-display font-semibold text-navy-900 group-hover:text-emerald-600 transition-colors mb-1">
+                  {expert.data.name}
+                </h2>
+                <p class="text-emerald-600 font-medium mb-3">{expert.data.role}</p>
+                <p class="text-navy-600 text-sm mb-4">{expert.data.bio}</p>
+                <div class="flex flex-wrap gap-2">
+                  {expert.data.certifications.slice(0, 2).map((cert: string) => (
+                    <span class="px-2 py-1 bg-gray-100 text-navy-600 rounded text-xs">
+                      {cert}
+                    </span>
+                  ))}
+                </div>
+              </div>
             </div>
           </a>
         ))}
       </div>
       
-      <!-- CTA -->
       <div class="mt-16 text-center">
         <p class="text-navy-600 mb-4">
           Besoin d'un conseil personnalisé pour votre projet ?
